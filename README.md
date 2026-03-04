@@ -33,9 +33,12 @@ Security → Code scanning
 ## Repository Structure
 
 ```
+.github/workflows/
+csharp_examples/
 python_examples/
 iac_examples/terraform/
-.github/workflows/
+README.md
+LICENSE
 ```
 
 ---

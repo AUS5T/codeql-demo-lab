@@ -1,6 +1,5 @@
 name: Gitleaks Secret Scan
 
-# Run when code is pushed or PRs opened
 on:
   push:
     branches: ["main"]
@@ -17,18 +16,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo so scanner can read files
+      # Step 1 — Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install Gitleaks CLI
+      # Step 2 — Install Go (needed to install Gitleaks)
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      # Step 3 — Install Gitleaks
       - name: Install Gitleaks
         run: |
-          wget https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64.tar.gz
-          tar -xzf gitleaks-linux-amd64.tar.gz
-          sudo mv gitleaks /usr/local/bin/
+          go install github.com/gitleaks/gitleaks/v8@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
 
-      # Run scan and export SARIF results
+      # Step 4 — Run scan and output SARIF
       - name: Run Gitleaks scan
         run: |
           gitleaks detect \
@@ -37,7 +41,7 @@ jobs:
             --report-path gitleaks.sarif \
             || true
 
-      # Upload results to GitHub Code Scanning
+      # Step 5 — Upload results to GitHub Code Scanning
       - name: Upload Gitleaks results
         uses: github/codeql-action/upload-sarif@v4
         with:

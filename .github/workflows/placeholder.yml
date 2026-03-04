@@ -4,6 +4,7 @@ on:
 
 jobs:
   placeholder:
+    permissions: {}
     runs-on: ubuntu-latest
     steps:
       - run: echo "placeholder"

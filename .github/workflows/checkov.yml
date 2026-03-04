@@ -1,0 +1,25 @@
+name: Checkov IaC Scan
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  checkov:
+    name: Run Checkov
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Checkov scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: iac_examples/terraform
+          soft_fail: true

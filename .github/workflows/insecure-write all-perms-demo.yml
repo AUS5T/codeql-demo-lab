@@ -1,0 +1,12 @@
+name: Insecure Workflow Demo - Write All Permissions
+
+on:
+  workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "intentional insecure workflow for CodeQL demo"

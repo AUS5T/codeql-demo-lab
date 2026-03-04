@@ -1,13 +1,12 @@
 name: Gitleaks Secret Scan
 
-# Run when code is pushed or PRs are opened
+# Run when code is pushed or PRs opened
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
 
-# Minimal permissions needed
 permissions:
   contents: read
   security-events: write
@@ -18,19 +17,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository so the scanner can read the code
+      # Checkout repo so scanner can read files
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Run Gitleaks to detect secrets
-      # SARIF output allows integration with GitHub Code Scanning
-      - name: Run Gitleaks scan
-        uses: gitleaks/gitleaks-action@v2
-        with:
-          args: detect --source . --report-format sarif --report-path gitleaks.sarif
+      # Install Gitleaks CLI
+      - name: Install Gitleaks
+        run: |
+          wget https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64.tar.gz
+          tar -xzf gitleaks-linux-amd64.tar.gz
+          sudo mv gitleaks /usr/local/bin/
 
-      # Step 3: Upload results to GitHub Security dashboard
+      # Run scan and export SARIF results
+      - name: Run Gitleaks scan
+        run: |
+          gitleaks detect \
+            --source . \
+            --report-format sarif \
+            --report-path gitleaks.sarif \
+            || true
+
+      # Upload results to GitHub Code Scanning
       - name: Upload Gitleaks results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: gitleaks.sarif

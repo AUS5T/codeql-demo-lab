@@ -1,0 +1,8 @@
+{
+  "name": "security-scanning-poc-deps",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "handlebars": "4.5.2"
+  }
+}

@@ -1,12 +1,16 @@
 # Intentionally insecure example for CodeQL demo purposes only.
-# Demonstrates command injection risk.
+# Demonstrates OS command injection via a Flask request parameter.
 
-import os
+from flask import Flask, request
+import subprocess
 
-def list_directory(user_input):
-    # Vulnerable: user input passed directly to shell command
-    os.system("ls " + user_input)
+app = Flask(__name__)
 
-if __name__ == "__main__":
-    user_input = input("Enter directory name: ")
-    list_directory(user_input)
+@app.get("/run")
+def run():
+    cmd = request.args.get("cmd", "echo hello")
+
+    # Vulnerable: user-controlled input executed by a shell
+    subprocess.run(cmd, shell=True, check=False)
+
+    return "ok"
